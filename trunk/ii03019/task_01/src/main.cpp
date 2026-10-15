@@ -1,7 +1,6 @@
 #include <iostream>
 #include <fstream>
 #include <iomanip>
-#include <memory>
 #include <vector>
 #include <string>
 #include <sstream>
@@ -10,30 +9,39 @@
 #include "Model2_5.h"
 #include "Model3_9.h"
 
+int sanitizeSteps(int raw_steps) {
+    constexpr int min_steps = 1;
+    constexpr int max_steps = 1000;
+    constexpr int default_steps = 30;
+
+    if (raw_steps < min_steps || raw_steps > max_steps) {
+        return default_steps;
+    }
+    return raw_steps;
+}
+
 int main(int argc, char* argv[]) {
-    int steps = 30; // значение по умолчанию
+    int parsed_steps = 30;
 
     if (argc > 1) {
-        // если передали аргумент командной строки
-        steps = std::atoi(argv[1]);
-        if (steps <= 0) steps = 30;
+        try {
+            parsed_steps = sanitizeSteps(std::stoi(argv[1]));
+        } catch (...) {
+            parsed_steps = 30;
+        }
     } else {
-        // интерактивный ввод с клавиатуры
-        std::cout << "Введите количество шагов симуляции n [по умолчанию 30]: ";
+        std::cout << "Enter simulation steps (default 30): ";
         std::string input;
-        std::getline(std::cin, input);
-        if (!input.empty()) {
+        if (std::getline(std::cin, input) && !input.empty()) {
             std::stringstream ss(input);
-            int parsed_steps = 0;
-            if (ss >> parsed_steps && parsed_steps > 0) {
-                steps = parsed_steps;
-            } else {
-                std::cout << "Некорректный ввод. Установлено значение по умолчанию: 30\n";
+            int val = 0;
+            if (ss >> val) {
+                parsed_steps = sanitizeSteps(val);
             }
         }
     }
 
-    std::cout << "Выбрано количество шагов: " << steps << "\n";
+    const int steps = parsed_steps;
 
     Model1_1 model1(0.8, 0.5);
     Model2_5 model2(0.7, 0.6);
@@ -41,41 +49,41 @@ int main(int argc, char* argv[]) {
 
     std::ofstream out("results.csv");
     if (!out.is_open()) {
-        std::cerr << "Не удалось открыть results.csv для записи!\n";
+        std::cerr << "Failed to open results.csv\n";
         return 1;
     }
 
     out << "step,signal,u,model1,model2,model3\n";
 
-    std::vector<SignalType> signals = {
+    // CTAD (Class Template Argument Deduction): без явного <SignalType>
+    const std::vector signals = {
         SignalType::STEP,
         SignalType::IMPULSE,
         SignalType::HARMONIC
     };
 
-    std::cout << "Лабораторная работа #1. Вариант 11. Симуляция (N = " << steps << ")\n";
+    std::cout << "Simulation started. Total steps: " << steps << "\n";
 
-    for (auto sigType : signals) {
-        std::string sigName = InputSignal::getSignalName(sigType);
-        std::cout << "\n================ [ Вход: " << sigName << " ] ================\n";
-        std::cout << std::setw(5) << "Шаг"
-                  << std::setw(12) << "Вход u"
+    for (const auto sigType : signals) {
+        const std::string sigName = InputSignal::getSignalName(sigType);
+        std::cout << "\n--- Signal: " << sigName << " ---\n";
+        std::cout << std::setw(6) << "Step"
+                  << std::setw(12) << "Input u"
                   << std::setw(14) << "Model 1.1"
                   << std::setw(14) << "Model 2.5"
                   << std::setw(14) << "Model 3.9" << "\n";
-        std::cout << std::string(59, '-') << "\n";
 
         model1.reset();
         model2.reset();
         model3.reset();
 
         for (int t = 0; t < steps; ++t) {
-            double u = InputSignal::getSignal(sigType, t);
-            double y1 = model1.step(u);
-            double y2 = model2.step(u);
-            double y3 = model3.step(u);
+            const double u = InputSignal::getSignal(sigType, t);
+            const double y1 = model1.step(u);
+            const double y2 = model2.step(u);
+            const double y3 = model3.step(u);
 
-            std::cout << std::setw(5) << t
+            std::cout << std::setw(6) << t
                       << std::fixed << std::setprecision(4)
                       << std::setw(12) << u
                       << std::setw(14) << y1
@@ -88,6 +96,6 @@ int main(int argc, char* argv[]) {
     }
 
     out.close();
-    std::cout << "\n[OK] Результаты сохранены в results.csv\n";
+    std::cout << "\nResults saved to results.csv\n";
     return 0;
 }
