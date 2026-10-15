@@ -11,6 +11,7 @@ double Model2_5::sign(double val) {
 }
 
 double Model2_5::step(double u) {
-    y = a * y + b * sign(u) * (1.0 - std::exp(-std::abs(u))); //[cite: 2]
-    return y;
+    double next_y = a * getY() + b * sign(u) * (1.0 - std::exp(-std::abs(u)));
+    setY(next_y);
+    return next_y;
 }

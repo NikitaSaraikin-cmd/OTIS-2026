@@ -2,7 +2,7 @@
 #define MODEL_H
 
 class Model {
-protected:
+private:
     double y;
 
 public:
@@ -12,6 +12,8 @@ public:
     virtual double step(double u) = 0;
 
     double getState() const { return y; }
+    double getY() const { return y; }
+    void setY(double new_y) { y = new_y; }
     void reset(double initial_y = 0.0) { y = initial_y; }
 };
 
