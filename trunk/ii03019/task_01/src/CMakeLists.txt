@@ -1,0 +1,12 @@
+add_executable(task_01
+    main.cpp
+    InputSignal.cpp
+    InputSignal.h
+    Model.h
+    Model1_1.cpp
+    Model1_1.h
+    Model2_5.cpp
+    Model2_5.h
+    Model3_9.cpp
+    Model3_9.h
+)
