@@ -3,7 +3,6 @@
 
 #include "Model.h"
 
-// y(t+1) = a * y(t) + b * sign(u(t)) * (1 - e^(-|u(t)|))
 class Model2_5 : public Model {
 private:
     double a;
@@ -11,8 +10,8 @@ private:
     static double sign(double val);
 
 public:
-    Model2_5(double a_val, double b_val, double initial_y = 0.0);
+    explicit Model2_5(double a_val, double b_val, double initial_y = 0.0);
     double step(double u) override;
 };
 
-#endif // MODEL2_5_H
+#endif
