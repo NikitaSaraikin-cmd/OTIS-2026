@@ -9,7 +9,7 @@
 #include "Model2_5.h"
 #include "Model3_9.h"
 
-int sanitizeSteps(int raw_steps) {
+int getSafeSteps(int raw_steps) {
     constexpr int min_steps = 1;
     constexpr int max_steps = 1000;
     constexpr int default_steps = 30;
@@ -25,7 +25,7 @@ int main(int argc, char* argv[]) {
 
     if (argc > 1) {
         try {
-            parsed_steps = sanitizeSteps(std::stoi(argv[1]));
+            parsed_steps = getSafeSteps(std::stoi(argv[1]));
         } catch (...) {
             parsed_steps = 30;
         }
@@ -36,7 +36,7 @@ int main(int argc, char* argv[]) {
             std::stringstream ss(input);
             int val = 0;
             if (ss >> val) {
-                parsed_steps = sanitizeSteps(val);
+                parsed_steps = getSafeSteps(val);
             }
         }
     }
@@ -55,14 +55,13 @@ int main(int argc, char* argv[]) {
 
     out << "step,signal,u,model1,model2,model3\n";
 
-    // CTAD (Class Template Argument Deduction): без явного <SignalType>
     const std::vector signals = {
         SignalType::STEP,
         SignalType::IMPULSE,
         SignalType::HARMONIC
     };
 
-    std::cout << "Simulation started. Total steps: " << steps << "\n";
+    std::cout << "Simulation started.\n";
 
     for (const auto sigType : signals) {
         const std::string sigName = InputSignal::getSignalName(sigType);
