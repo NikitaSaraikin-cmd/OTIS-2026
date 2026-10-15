@@ -3,12 +3,13 @@ import os
 import csv
 import matplotlib.pyplot as plt
 
-# Определение путей
-csv_file = "results.csv"
+CSV_FILENAME = "results.csv"
+
+csv_file = CSV_FILENAME
 if not os.path.exists(csv_file):
-    csv_file = os.path.join("..", "results.csv")
+    csv_file = os.path.join("..", CSV_FILENAME)
 if not os.path.exists(csv_file):
-    csv_file = os.path.join("build", "src", "results.csv")
+    csv_file = os.path.join("build", "src", CSV_FILENAME)
 
 doc_dir = os.path.join(os.path.dirname(__file__), "..", "doc")
 if not os.path.exists(doc_dir):
@@ -54,10 +55,8 @@ for key, title_name, out_filename in models_info:
     save_path = os.path.join(doc_dir, out_filename)
     plt.savefig(save_path, dpi=300)
     plt.close()
-    print("[OK] Saved: " + save_path)
     created_files.append(os.path.abspath(save_path))
 
-# Принудительное открытие картинок в Windows
-print("[*] Открытие графиков в системе...")
 for img_path in created_files:
-    os.startfile(img_path)
+    if hasattr(os, "startfile"):
+        os.startfile(img_path)
