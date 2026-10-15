@@ -175,7 +175,3 @@ classDiagram
     Model <|-- Model3_9
     InputSignal ..> Model : generates input u
 ```
-
-## Рецензирование (Code Review)
-1. Рецензия на Pull Request студента [ФИО / Логин]: [Ссылка на Pull Request]
-2. Рецензия на Pull Request студента [ФИО / Логин]: [Ссылка на Pull Request]
