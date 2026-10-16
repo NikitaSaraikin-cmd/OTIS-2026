@@ -15,48 +15,38 @@ doc_dir = os.path.join(os.path.dirname(__file__), "..", "doc")
 if not os.path.exists(doc_dir):
     os.makedirs(doc_dir)
 
-# Считывание данных
-rows = []
-with open(csv_file, 'r') as f:
+steps = []
+inputs_u = []
+outputs_y = []
+model_title = "Selected Model"
+signal_title = "Selected Signal"
+
+with open(csv_file, 'r', encoding='utf-8') as f:
     reader = csv.DictReader(f)
     for r in reader:
-        rows.append({
-            'step': int(r['step']),
-            'signal': r['signal'],
-            'model1': float(r['model1']),
-            'model2': float(r['model2']),
-            'model3': float(r['model3'])
-        })
+        steps.append(int(r['step']))
+        inputs_u.append(float(r['u']))
+        outputs_y.append(float(r['y']))
+        if 'model_name' in r and r['model_name']:
+            model_title = r['model_name']
+        if 'signal' in r and r['signal']:
+            signal_title = r['signal']
 
-signals = ["Step", "Impulse", "Harmonic"]
-models_info = [
-    ("model1", "Model 1.1 (Standard First-Order Inertial System)", "plot.png"),
-    ("model2", "Model 2.5 (Signum Friction and Exponential Growth)", "plot2.png"),
-    ("model3", "Model 3.9 (Bounded Saturation Rate)", "plot3.png")
-]
+# Строим один красивый совмещенный график: входной сигнал и реакция системы
+plt.figure(figsize=(9, 5))
+plt.plot(steps, inputs_u, 'r--', label=f"Input Signal u ({signal_title})", linewidth=1.5)
+plt.plot(steps, outputs_y, 'b-o', markersize=4, label=f"Output State y ({model_title})", linewidth=2)
 
-created_files = []
+plt.title(f"Dynamic Response: {model_title} | Input: {signal_title}", fontsize=12)
+plt.xlabel("Step (tau)", fontsize=10)
+plt.ylabel("Value", fontsize=10)
+plt.grid(True, linestyle=':', alpha=0.6)
+plt.legend()
+plt.tight_layout()
 
-for key, title_name, out_filename in models_info:
-    plt.figure(figsize=(9, 5))
-    for sig in signals:
-        steps_sig = [r['step'] for r in rows if r['signal'] == sig]
-        vals_sig = [r[key] for r in rows if r['signal'] == sig]
-        lbl = "Output y (Input: " + str(sig) + ")"
-        plt.plot(steps_sig, vals_sig, marker='o', markersize=3, label=lbl)
+save_path = os.path.join(doc_dir, "plot_task01.png")
+plt.savefig(save_path, dpi=300)
+plt.close()
 
-    plt.title(title_name, fontsize=12)
-    plt.xlabel("Step (tau)", fontsize=10)
-    plt.ylabel("Output y", fontsize=10)
-    plt.grid(True, linestyle=':', alpha=0.6)
-    plt.legend()
-    plt.tight_layout()
-
-    save_path = os.path.join(doc_dir, out_filename)
-    plt.savefig(save_path, dpi=300)
-    plt.close()
-    created_files.append(os.path.abspath(save_path))
-
-for img_path in created_files:
-    if hasattr(os, "startfile"):
-        os.startfile(img_path)
+if hasattr(os, "startfile"):
+    os.startfile(os.path.abspath(save_path))
