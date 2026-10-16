@@ -25,8 +25,7 @@ int getSafeSteps(int raw_steps) {
 // Вспомогательная функция для ввода коэффициентов со значениями по умолчанию
 double getDoubleInput(const std::string& prompt, double default_value) {
     std::cout << prompt << " (default " << default_value << "): ";
-    std::string input;
-    if (std::getline(std::cin, input) && !input.empty()) {
+    if (std::string input; std::getline(std::cin, input) && !input.empty()) {
         std::stringstream ss(input);
         double val = 0.0;
         if (ss >> val) {
@@ -36,14 +35,14 @@ double getDoubleInput(const std::string& prompt, double default_value) {
     return default_value;
 }
 
+// Выбор модели
 int getModelChoice() {
     std::cout << "Select model:\n"
-              << "  1. Model 1.1 (Standard First-Order Inertial System)\n"
-              << "  2. Model 2.5 (Signum Friction)\n"
-              << "  3. Model 3.9 (Bounded Saturation Rate)\n"
+              << "  1. Model 1.1 (Standard First-Order Inertial System: y[t+1] = a*y[t] + b*u[t])\n"
+              << "  2. Model 2.5 (Signum Friction: y[t+1] = a*y[t] + b*sign(u)*(1 - exp(-|u|)))\n"
+              << "  3. Model 3.9 (Bounded Saturation Rate: dy/dt = b*tanh(u))\n"
               << "Enter choice (1-3, default 1): ";
-    std::string input;
-    if (std::getline(std::cin, input) && !input.empty()) {
+    if (std::string input; std::getline(std::cin, input) && !input.empty()) {
         std::stringstream ss(input);
         int val = 1;
         if (ss >> val && (val >= 1 && val <= 3)) {
@@ -60,8 +59,7 @@ SignalType getSignalChoice() {
               << "  2. Impulse (u(0) = A, u(t>0) = 0)\n"
               << "  3. Harmonic (u = A * sin(t))\n"
               << "Enter choice (1-3, default 1): ";
-    std::string input;
-    if (std::getline(std::cin, input) && !input.empty()) {
+    if (std::string input; std::getline(std::cin, input) && !input.empty()) {
         std::stringstream ss(input);
         int val = 1;
         if (ss >> val) {
@@ -90,8 +88,7 @@ int main(int argc, char* argv[]) {
         }
     } else {
         std::cout << "Enter simulation steps (default 30): ";
-        std::string input;
-        if (std::getline(std::cin, input) && !input.empty()) {
+        if (std::string input; std::getline(std::cin, input) && !input.empty()) {
             std::stringstream ss(input);
             int val = 0;
             if (ss >> val) {
@@ -109,7 +106,6 @@ int main(int argc, char* argv[]) {
 
     std::cout << "\n--- Parameters configuration ---\n";
 
-    // Ввод коэффициентов в зависимости от выбранной модели
     switch (model_choice) {
         case 2: {
             const double a = getDoubleInput("Enter parameter a", 0.7);
