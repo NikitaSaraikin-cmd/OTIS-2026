@@ -21,7 +21,7 @@ cmake --build build
 if errorlevel 1 goto error
 
 echo [STAGE 3] Execution
-if exist "build\src\ii03019_task_01.exe" (
+if exist "build\src\ii03020_task_01.exe" (
     "build\src\ii03019_task_01.exe"
 ) else if exist "build\src\task_01.exe" (
     "build\src\task_01.exe"
