@@ -12,7 +12,8 @@ public:
 int main() {
     std::cout << "--- OTIS Task 02: Simulation and Stability ---\n";
 
-    double a = 0.5, b = 1.0;
+    double a = 0.5;
+    double b = 1.0;
     StabilityAnalyzer::isStableFirstOrder(a, true);
 
     Model1_1 linModel(a, b, 0.0);
